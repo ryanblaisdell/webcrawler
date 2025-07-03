@@ -3,7 +3,8 @@ import sys
 
 REQUIRED_PACKAGES = [
     "requests",
-    "beautifulsoup4"
+    "beautifulsoup4",
+    "pymongo"
 ]
 
 def install(package):
