@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 USER_AGENT = "MyPythonWikipediaCrawler (contact@example.com)"
 
 
-def fetch_and_parse(page_url: str) -> tuple[str, str, list]:
+def fetch_and_parse(page_url: str) -> tuple[str, str, list, list]:
     """
     Fetches the HTML content of a URL and extracts all internal Wikipedia links.
     """
@@ -25,6 +25,7 @@ def fetch_and_parse(page_url: str) -> tuple[str, str, list]:
         html_content = response.text
         links = extract_wikipedia_links(html_content, page_url)
         page_text = extract_page_content(html_content)
+        images = extract_page_images(html_content)
     except requests.exceptions.RequestException as e:
         logger.warning(f"Error fetching {page_url}: {e}")
         page_text = ""
@@ -32,7 +33,7 @@ def fetch_and_parse(page_url: str) -> tuple[str, str, list]:
         logger.error(f"An unexpected error occurred with {page_url}: {e}")
         page_text = ""
 
-    return html_content, page_text, links
+    return html_content, page_text, links, images
 
 
 def extract_wikipedia_links(html_content: str, base_url: str) -> list:
@@ -62,8 +63,21 @@ def extract_page_content(html_content: str) -> str:
     page_text = ",".join(words)
     return page_text
 
+def extract_page_images(html_content: str) -> list:
+    image_src = []
+    soup = BeautifulSoup(html_content, 'html.parser')
+    images = soup.find_all('img')
 
-def worker(url_queue, visited_urls, visited_urls_lock, crawled_html_content, crawled_html_content_lock, stop_crawling_flag, MAX_PAGES_TO_CRAWL, CRAWL_DELAY):
+    for image in images:
+        if isinstance(image, Tag):
+            src = image.get('src')
+            if src:
+                image_src.append(src)
+    
+    return image_src
+        
+
+def worker(url_queue, visited_urls, visited_urls_lock, stop_crawling_flag, MAX_PAGES_TO_CRAWL, CRAWL_DELAY):
     import threading
     import time
     current_thread = threading.current_thread().name
@@ -93,16 +107,15 @@ def worker(url_queue, visited_urls, visited_urls_lock, crawled_html_content, cra
                 break
             logger.info(f"{current_thread} Crawling: {page_url} (Visited {current_pages_crawled}/{MAX_PAGES_TO_CRAWL})")
 
-        html_content, page_content, links = fetch_and_parse(page_url)
+        html_content, page_content, links, images = fetch_and_parse(page_url)
 
-        if html_content and page_content:
-            with crawled_html_content_lock:
-                crawled_html_content[page_url] = html_content, page_content
-            save_page(page_url, html_content, page_content)
+        if html_content and page_content and images:
+            save_page(page_url, html_content, page_content, images)
 
         for link in links:
             with visited_urls_lock:
                 if not stop_crawling_flag.is_set() and link not in visited_urls:
                     url_queue.append(link)
+                    
         time.sleep(CRAWL_DELAY)
     logger.info(f"{current_thread} exiting.")
