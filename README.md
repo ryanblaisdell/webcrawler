@@ -1,6 +1,14 @@
 # webcrawler
 Web crawler project
 
+### upcoming
+the current indexing and crawling is good, however it can be scaled. thats an issue for later on.
+
+todo:
+- need to implement the query engine to make sense of the indexed data and return suitable results
+- implement some sort of ui/client
+- clean the crawler/ index application up. refactoring code and decoupling functions to seperate concerns
+
 ## requirements
 
 - Python 3.13.5
