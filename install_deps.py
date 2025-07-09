@@ -6,7 +6,9 @@ REQUIRED_PACKAGES = [
     "beautifulsoup4",
     "pymongo",
     "scikit-learn",
-    "scipy"
+    "scipy",
+    "numpy",
+    "tqdm"
 ]
 
 def install(package):

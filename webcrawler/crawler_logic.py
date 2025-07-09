@@ -75,9 +75,6 @@ def extract_page_content(html_content: str) -> str:
     return page_text
 
 def worker(url_queue, visited_urls, visited_urls_lock, stop_crawling_flag, MAX_PAGES_TO_CRAWL, CRAWL_DELAY):
-    current_thread = threading.current_thread().name
-    logger.info(f"{current_thread} starting.")
-
     while not stop_crawling_flag.is_set():
         page_url = None
         try:
@@ -98,10 +95,8 @@ def worker(url_queue, visited_urls, visited_urls_lock, stop_crawling_flag, MAX_P
             mark_url_visited(page_url)
             current_pages_crawled = len(visited_urls)
             if current_pages_crawled >= MAX_PAGES_TO_CRAWL:
-                logger.info(f"{current_thread}: Max pages ({MAX_PAGES_TO_CRAWL}) reached. Signalling stop.")
                 stop_crawling_flag.set()
                 break
-            logger.info(f"{current_thread} Crawling: {page_url} (Visited {current_pages_crawled}/{MAX_PAGES_TO_CRAWL})")
 
         html_content, links = fetch_and_parse(page_url)
 
@@ -114,4 +109,3 @@ def worker(url_queue, visited_urls, visited_urls_lock, stop_crawling_flag, MAX_P
                     url_queue.append(link)
 
         time.sleep(CRAWL_DELAY)
-    logger.info(f"{current_thread} exiting.")
