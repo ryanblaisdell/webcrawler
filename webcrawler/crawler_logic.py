@@ -7,6 +7,9 @@ import logging
 import threading
 import time
 
+# TODO: 
+# - clean up the worker function to make it more readable; move logic into seperate functions
+
 logger = logging.getLogger(__name__)
 
 USER_AGENT = "example.com"
