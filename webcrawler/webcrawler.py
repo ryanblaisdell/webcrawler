@@ -1,28 +1,23 @@
-import logging
 import threading
 import time
 from collections import deque
 from crawler_logic import worker
-from db import save_page
+from utils.logger import logger
 
 # TODO: 
 
-# - maybe see if you can track all of the outlinks and backlinks on a single page
 # - instead of storing the words separated, we can store the html content, then implement the indexer,
 #   the indexer can be in charge of pulling the html, and then extracting the useful words and 
 #   adding them into a map with frequency and weights ( find some algorithm like PageRank )
-
-# configure logging for crawler application
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+# - clean up the structure of the code; move things out into their own files or functions to separate concerns
 
 # threading flag to signal workers to stop crawling
 stop_crawling_flag = threading.Event()
 
 # Constants
-MAX_PAGES_TO_CRAWL = 10
-CRAWL_DELAY_SECONDS = 0.5
-NUMBER_OF_WORKERS = 5
+MAX_PAGES_TO_CRAWL = 500
+CRAWL_DELAY_SECONDS = 0.2
+NUMBER_OF_WORKERS = 20
 
 # Shared data structures
 visited_urls = set()

@@ -4,7 +4,8 @@ import sys
 REQUIRED_PACKAGES = [
     "requests",
     "beautifulsoup4",
-    "pymongo"
+    "pymongo",
+    "scikit-learn"
 ]
 
 def install(package):
