@@ -3,16 +3,12 @@ from indexer.indexer_logic import process_batch_with_tfidf
 from utils.logger import logger
 from tqdm import tqdm
 
-"""
-    The pbar.update(1) calls are just to complete the progress bars that appear in the terminal when indexing
-"""
 def index_raw_html_pages():
     with tqdm(total=1, desc="Fetching unprocessed pages", bar_format="{l_bar}{bar} [time elapsed: {elapsed}]") as pbar:
         html_batch = fetch_unprocessed()
         pbar.update(1)
         
     if not html_batch:
-        print("There is no html content to process...")
         return
 
     indexed_data = process_batch_with_tfidf(html_batch)

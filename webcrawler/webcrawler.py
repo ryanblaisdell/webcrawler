@@ -11,9 +11,9 @@ from tqdm import tqdm
 # - next up: implementing the query engine to pull relavent results from the DB
 
 #region - Constants
-MAX_PAGES_TO_CRAWL = 500
+MAX_PAGES_TO_CRAWL = 50
 CRAWL_DELAY_SECONDS = 0.2
-NUMBER_OF_WORKERS = 20
+NUMBER_OF_WORKERS = 10
 STOP_CRAWLING_FLAG = threading.Event()
 #endregion
 
@@ -24,7 +24,7 @@ url_queue = deque()  # Shared queue of URLs to crawl
 #endregion
 
 def main():
-    start_url = "https://en.wikipedia.org/wiki/Association_football"
+    start_url = "https://en.wikipedia.org/wiki/Better_Call_Saul"
 
     if is_url_visited(start_url):
         logger.error(f"Starting URL has already been visited.\n\n URL:{start_url}")
